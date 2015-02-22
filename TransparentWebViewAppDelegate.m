@@ -12,18 +12,19 @@
 
 NSString *const TWVLocationUrlKey = @"WebViewLocationUrl";
 NSString *const TWVBorderlessWindowKey = @"OpenBorderlessWindow";
-NSString *const TWVDrawCroppedUnderTitleBarKey = @"DrawCroppedUnderTitleBar";
 NSString *const TWVMainTransparantWindowFrameKey = @"MainTransparentWindow";
 NSString *const TWVWindowFloatingKey = @"WindowFloating";
 
-CGFloat const titleBarHeight = 22.0f;
-
 double const kOpacityInterval = 0.1;
 
-@implementation TransparentWebViewAppDelegate
+const CGFloat kToolbarHeight = 40.0;
+
+@implementation TransparentWebViewAppDelegate {
+  CGFloat _toolbarHeight;
+}
 
 @synthesize window, theWebView;
-@synthesize borderlessWindowMenuItem, cropUnderTitleBarMenuItem;
+@synthesize borderlessWindowMenuItem;
 @synthesize locationSheet, urlString;
 @synthesize preferenceController;
 
@@ -34,7 +35,6 @@ double const kOpacityInterval = 0.1;
   
   [defaultValues setObject:@"http://localhost/" forKey:TWVLocationUrlKey];
   [defaultValues setObject:[NSNumber numberWithBool:NO] forKey:TWVBorderlessWindowKey];
-  [defaultValues setObject:[NSNumber numberWithBool:NO] forKey:TWVDrawCroppedUnderTitleBarKey];
   
   [defaultValues setObject:[NSNumber numberWithBool:NO] forKey:TWVShouldAutomaticReloadKey];
   [defaultValues setObject:[NSNumber numberWithBool:YES] forKey:TWVWindowFloatingKey];
@@ -68,38 +68,23 @@ double const kOpacityInterval = 0.1;
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 	// Insert code here to initialize your application
 	NSLog(@"TransparentWebView app got launched ...");
+  
+  [window setDelegate:self];
+  
+  // Set the window type and the content frame
+  self.borderedWindow = window;
+  
+  [self replaceWindowWithBorderlessWindow:[self _borderlessState]];
+  [self setBorderlessWindowMenuItemState:[self _borderlessState]];
+  
   [self loadUrlString:self.urlString IntoWebView:self.theWebView];
   
   [self _setWebViewOpacity:[self _opacity]];
   
   [self _setFloatingState:[self _isWindowFloating]];
 	
-	// Deal with the borderless and crop under title bar settings
-	BOOL borderlessState = [[[NSUserDefaults standardUserDefaults] objectForKey:TWVBorderlessWindowKey] boolValue];
-	BOOL cropUnderTitleState = [[[NSUserDefaults standardUserDefaults] objectForKey:TWVDrawCroppedUnderTitleBarKey] boolValue];
-	
-	// Set the state of the menu items
-	[self setBorderlessWindowMenuItemState:borderlessState];
-	[self setCropUnderTitleBarMenuItemState:cropUnderTitleState];
-	
 	// Make us the delegate of the Main Window
-	[window setDelegate:self];
-	
-  // Set the window type and the content frame
-  self.borderedWindow = window;
   
-	if (borderlessState) {
-		NSRect borderlessContentRect = [[window contentView] frame];
-		if (cropUnderTitleState) {
-			borderlessContentRect = [window frame];
-		}
-		[self replaceWindowWithBorderlessWindow:YES WithContentRect:borderlessContentRect];
-	} else {
-		if (cropUnderTitleState) {
-			[self cropContentUnderTitleBar:YES];
-		}
-	}
-	
 	// Start a timer if the Transparent Web View is set to reload with a given interval
 	[self resetAutomaticReloadTimer];
 }
@@ -111,9 +96,9 @@ double const kOpacityInterval = 0.1;
 	//
 	[NSApp beginSheet:locationSheet
 	   modalForWindow:window
-		modalDelegate:nil
+      modalDelegate:nil
 	   didEndSelector:NULL
-		  contextInfo:NULL];
+        contextInfo:NULL];
 }
 
 
@@ -204,58 +189,22 @@ double const kOpacityInterval = 0.1;
 #pragma mark -
 #pragma mark Borderless Window
 
-- (IBAction)toggleBorderlessWindow:(id)sender {
-	
-	// Toggle the borderless Window state:
-	BOOL newState = ([borderlessWindowMenuItem state] == NSOffState);
-	
-	// Set the MenuItemState
-	[self setBorderlessWindowMenuItemState:newState];
-	
-	// Save the borderless Window state in the Preferences
-	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	[defaults setObject:[NSNumber numberWithBool:newState] forKey:TWVBorderlessWindowKey];
-	
-	// Create a new window and reload the content
-	NSLog(@"Create a new %@ window", newState ? @"BORDERLESS" : @"BORDERED");
-	
-	BOOL cropUnderTitleState = [[[NSUserDefaults standardUserDefaults] objectForKey:TWVDrawCroppedUnderTitleBarKey] boolValue];
-
-	NSRect newContentRect = [window frame];
-	if (newState) {
-		if (cropUnderTitleState) {
-			[self cropContentUnderTitleBar:NO];
-		} else {
-			newContentRect.size.height = newContentRect.size.height - titleBarHeight;
-		}
-	} else {
-		if (cropUnderTitleState) {
-			[self cropContentUnderTitleBar:YES];
-		} else {
-			// Fix the window frame (not the content frame)
-			NSRect theWindowFrame = [window frame];
-			theWindowFrame.size.height = theWindowFrame.size.height + titleBarHeight;
-			[window setFrame:theWindowFrame display:NO];
-		}
-	}
-	
-	[self replaceWindowWithBorderlessWindow:newState WithContentRect:newContentRect];
+- (BOOL)_borderlessState {
+  return [[NSUserDefaults standardUserDefaults] boolForKey:TWVBorderlessWindowKey];
 }
 
-- (IBAction)toggleCropUnderTitleBar:(id)sender {
-
-	// Toggle the Crop Under Title Bar state:
-	BOOL newState = ([cropUnderTitleBarMenuItem state] == NSOffState);
-
-	// Set the MenuItemState
-	[self setCropUnderTitleBarMenuItemState:newState];
-
-	// Save the Crop Under Title Bar state in the Preferences
-	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	[defaults setObject:[NSNumber numberWithBool:newState] forKey:TWVDrawCroppedUnderTitleBarKey];
+- (IBAction)toggleBorderlessWindow:(id)sender {
+	// Toggle the borderless Window state:
+  BOOL borderless = ![self _borderlessState];
 	
-	// Perform the content cropping change
-	[self cropContentUnderTitleBar:newState];
+	// Set the MenuItemState
+	[self setBorderlessWindowMenuItemState:borderless];
+	
+	// Save the borderless Window state in the Preferences
+	[[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:borderless]
+                                            forKey:TWVBorderlessWindowKey];
+	
+	[self replaceWindowWithBorderlessWindow:borderless];
 }
 
 
@@ -267,30 +216,15 @@ double const kOpacityInterval = 0.1;
 	if (booleanState) {
 		// YES BorderlessWindow
 		NSLog(@"Set borderless!");
-		[borderlessWindowMenuItem setState:NSOnState];
-		[borderlessWindowMenuItem setTitle:@"Hide Borderless"];
-		[cropUnderTitleBarMenuItem setEnabled:NO];
+		[borderlessWindowMenuItem setTitle:@"Show Title Bar"];
 	} else {
 		// NO BorderlessWindow
 		NSLog(@"Set NOT borderless!");
-		[borderlessWindowMenuItem setState:NSOffState];
-		[borderlessWindowMenuItem setTitle:@"Show Borderless"];
-		[cropUnderTitleBarMenuItem setEnabled:YES];
-	}
-}
-
-- (void)setCropUnderTitleBarMenuItemState:(BOOL)booleanState {
-	
-	if (booleanState) {
-		// YES CropUnderTitleBar
-		[cropUnderTitleBarMenuItem setState:NSOnState];
-	} else {
-		// NO CropUnderTitleBar
-		[cropUnderTitleBarMenuItem setState:NSOffState];
+		[borderlessWindowMenuItem setTitle:@"Hide Title Bar"];
 	}
 }
 	
-- (void)replaceWindowWithBorderlessWindow:(BOOL)borderlessFlag WithContentRect:(NSRect)contentRect {
+- (void)replaceWindowWithBorderlessWindow:(BOOL)borderlessFlag {
 
 	// Save the previous frame (to file and to string)
 	[self.window saveFrameUsingName:TWVMainTransparantWindowFrameKey];
@@ -300,7 +234,7 @@ double const kOpacityInterval = 0.1;
 	NSWindow *oldWindow = self.window;
 	
   if (self.borderlessWindow == nil) {
-    self.borderlessWindow = [[WebViewWindow alloc] initWithContentRect:contentRect
+    self.borderlessWindow = [[WebViewWindow alloc] initWithContentRect:oldWindow.frame
                                                          styleMask:NSBorderlessWindowMask
                                                            backing:NSBackingStoreBuffered
                                                              defer:NO];
@@ -312,32 +246,23 @@ double const kOpacityInterval = 0.1;
   self.window.contentView = oldWindow.contentView;
   self.window.frameAutosaveName = TWVMainTransparantWindowFrameKey;
   [self.window setFrameFromString:savedFrameString];
+  
+  CGRect newFrame = oldWindow.frame;
+  if (borderlessFlag) {
+//    newFrame.origin.y -= 2*kToolbarHeight;
+    newFrame.size.height -= kToolbarHeight;
+  } else {
+//    newFrame.origin.y += 2*kToolbarHeight;
+    newFrame.size.height += kToolbarHeight;
+  }
+  [self.window setFrame:newFrame display:YES];
+  
   self.window.delegate = self;
   
   // Call the same window as awakeFromNib would have
   [(WebViewWindow *)window setDrawsBackgroundSettings];
   
   [self.window makeKeyAndOrderFront:self.window];
-}
-
-- (void)cropContentUnderTitleBar:(BOOL)cropUnderTitleFlag {
-	// Set the new frame of the web view
-	
-	// The origin.y is measured from the bottom, so we only have to set the height	
-	//		newFrame.origin.y = newFrame.origin.y + titleBarHeight;
-	
-	// Get the current frame of the WebView
-	NSRect newFrame = theWebView.frame;
-
-	// Change the frame 
-	if (cropUnderTitleFlag) {
-		newFrame.size.height = newFrame.size.height + titleBarHeight;
-	} else {
-		newFrame.size.height = newFrame.size.height - titleBarHeight;
-	}
-	
-	// Set the frame back to the web view
-	[theWebView setFrame:newFrame];
 }
 
 #pragma mark - Floating window
@@ -352,8 +277,10 @@ double const kOpacityInterval = 0.1;
 }
 
 - (void)_setFloatingState:(BOOL)floating {
-  window.level = floating ? NSStatusWindowLevel : NSNormalWindowLevel;
-  window.hasShadow = !floating;
+  self.borderedWindow.level = floating ? NSStatusWindowLevel : NSNormalWindowLevel;
+  self.borderlessWindow.level = floating ? NSStatusWindowLevel : NSNormalWindowLevel;
+  self.borderedWindow.hasShadow = !floating;
+  self.borderlessWindow.hasShadow = !floating;
   [_floatingToolbarButton setState:floating ? NSOnState : NSOffState];
   [_floatingToolbarButton setTitle:floating ? @"Floating" : @"Float"];
   [_floatingToolbarButton setImage:[NSImage imageNamed:floating ? @"FloatingWindowTemplate" : @"RegularWindowTemplate"]];
