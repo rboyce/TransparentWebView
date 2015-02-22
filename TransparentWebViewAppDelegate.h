@@ -38,8 +38,9 @@ extern NSString *const TWVMainTransparantWindowFrameKey;
   
 @property (nonatomic, strong) NSWindow *borderedWindow;
 @property (nonatomic, strong) NSWindow *borderlessWindow;
-
+  
 @property (assign) IBOutlet NSMenuItem *borderlessWindowMenuItem;
+@property (assign) IBOutlet NSMenuItem *floatingWindowMenuItem;
   
 @property (assign) IBOutlet NSMenuItem *increaseOpacityMenuItem;
 @property (assign) IBOutlet NSMenuItem *decreaseOpacityMenuItem;

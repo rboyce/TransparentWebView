@@ -227,9 +227,14 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="338"/>
-                            <menuItem title="Show Title Bar" keyEquivalent="T" id="322">
+                            <menuItem title="Float on Top" keyEquivalent="F" id="322">
                                 <connections>
-                                    <action selector="toggleBorderlessWindow:" target="210" id="324"/>
+                                    <action selector="toogleFloating:" target="210" id="z6E-eq-R3a"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Show Title Bar" keyEquivalent="T" id="yzS-6X-MRt">
+                                <connections>
+                                    <action selector="toggleBorderlessWindow:" target="210" id="3JF-MD-kfx"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="92">
@@ -247,9 +252,10 @@
         </menu>
         <customObject id="210" customClass="TransparentWebViewAppDelegate">
             <connections>
-                <outlet property="borderlessWindowMenuItem" destination="322" id="326"/>
+                <outlet property="borderlessWindowMenuItem" destination="yzS-6X-MRt" id="PFD-wY-DmM"/>
                 <outlet property="decreaseOpacityMenuItem" destination="333" id="335"/>
                 <outlet property="floatingToolbarButton" destination="373" id="dLE-NN-agf"/>
+                <outlet property="floatingWindowMenuItem" destination="322" id="yQl-cW-k72"/>
                 <outlet property="increaseOpacityMenuItem" destination="332" id="334"/>
                 <outlet property="locationSheet" destination="215" id="228"/>
                 <outlet property="theWebView" destination="206" id="235"/>

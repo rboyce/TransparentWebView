@@ -270,6 +270,7 @@ const CGFloat kToolbarHeight = 40.0;
 - (BOOL)_isWindowFloating {
   return [[NSUserDefaults standardUserDefaults] boolForKey:TWVWindowFloatingKey];
 }
+
 - (IBAction)toogleFloating:(id)sender {
   BOOL floating = ![self _isWindowFloating];
   [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:floating] forKey:TWVWindowFloatingKey];
@@ -281,9 +282,12 @@ const CGFloat kToolbarHeight = 40.0;
   self.borderlessWindow.level = floating ? NSStatusWindowLevel : NSNormalWindowLevel;
   self.borderedWindow.hasShadow = !floating;
   self.borderlessWindow.hasShadow = !floating;
+  
   [_floatingToolbarButton setState:floating ? NSOnState : NSOffState];
   [_floatingToolbarButton setTitle:floating ? @"Floating" : @"Float"];
   [_floatingToolbarButton setImage:[NSImage imageNamed:floating ? @"FloatingWindowTemplate" : @"RegularWindowTemplate"]];
+  
+  [_floatingWindowMenuItem setState:floating ? NSOnState : NSOffState];
 }
 
 #pragma mark - Opacity
