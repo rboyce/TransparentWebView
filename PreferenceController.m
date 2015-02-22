@@ -12,6 +12,9 @@ NSString *const TWVShouldAutomaticReloadKey = @"shouldAutomaticRelaod";
 NSString *const TWVAutomaticReloadIntervalKey = @"automaticReloadInterval";
 NSString *const TWVAutomaticReloadChangedNotification = @"TWVautomaticReloadChanged";
 
+NSString *const TWVOpacityKey = @"opacity";
+NSString *const TWVOpacityChangedNotification = @"TWVopacityChanged";
+
 
 @implementation PreferenceController
 
@@ -36,6 +39,11 @@ NSString *const TWVAutomaticReloadChangedNotification = @"TWVautomaticReloadChan
 	return [defaults integerForKey:TWVAutomaticReloadIntervalKey];
 }
 
+- (double)opacity {
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  return [defaults doubleForKey:TWVOpacityKey];
+}
+
 
 - (void)windowDidLoad {
 	BOOL shouldReloadState = [self shouldAutomaticReload];
@@ -44,7 +52,9 @@ NSString *const TWVAutomaticReloadChangedNotification = @"TWVautomaticReloadChan
 	int intervalSeconds = [self automaticReloadInterval];
 	lastSliderValue = powf(intervalSeconds / (180.0 * 60.0), (1 / 2.0));
 	[autoRefreshIntervalSlider setFloatValue:lastSliderValue];
-	[self setAutomaticIntervalLabelValue:intervalSeconds];
+  [self setAutomaticIntervalLabelValue:intervalSeconds];
+  [self setOpacitySliderValue:self.opacity];
+  [self setOpacityLabelValue:self.opacity];
 }
 
 
@@ -125,6 +135,44 @@ NSString *const TWVAutomaticReloadChangedNotification = @"TWVautomaticReloadChan
 	
 	// Send a notification
 	[[NSNotificationCenter defaultCenter] postNotificationName:TWVAutomaticReloadChangedNotification object:self];
+}
+
+#pragma mark - Opacity
+
+- (void)changeOpacityValue:(id)sender
+{
+  double opacity = [opacitySlider doubleValue] / 100.0;
+  if (fabs(opacity - self.opacity) > 0.1) {
+    [self setOpacityLabelValue:opacity];
+    [self setOpacityPreference:opacity];
+  }
+}
+
+- (void)setOpacityValue:(double)opacity setPreference:(BOOL)setPreference {
+  [self setOpacitySliderValue:opacity];
+  [self setOpacityLabelValue:opacity];
+  if (setPreference) {
+    [self setOpacityPreference:opacity];
+  }
+  
+}
+
+- (void)setOpacityLabelValue:(double)opacity {
+  [opacityValueLabel setStringValue:[NSString stringWithFormat:@"%.f%%", round(opacity * 100.0), nil]];
+}
+
+- (void)setOpacitySliderValue:(double)opacity {
+  [opacitySlider setDoubleValue:opacity * 100.0];
+}
+
+- (void)setOpacityPreference:(double)opacity {
+  // Set the value in the Defaults
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  [defaults setObject:[NSNumber numberWithDouble:opacity] forKey:TWVOpacityKey];
+  [defaults synchronize];
+  
+  // Send a notification
+  [[NSNotificationCenter defaultCenter] postNotificationName:TWVOpacityChangedNotification object:self];
 }
 
 

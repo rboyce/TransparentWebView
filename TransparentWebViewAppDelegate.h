@@ -40,13 +40,19 @@ extern NSString *const TWVMainTransparantWindowFrameKey;
 
 @property (assign) IBOutlet NSMenuItem *borderlessWindowMenuItem;
 @property (assign) IBOutlet NSMenuItem *cropUnderTitleBarMenuItem;
+  
+@property (assign) IBOutlet NSMenuItem *increaseOpacityMenuItem;
+@property (assign) IBOutlet NSMenuItem *decreaseOpacityMenuItem;
 
 @property (assign) IBOutlet NSWindow *locationSheet;
 @property (nonatomic, retain) NSString *urlString;
 	
 @property (nonatomic, retain) PreferenceController *preferenceController;
 
-//- (IBAction)reloadPage:(id)sender;
+  //- (IBAction)reloadPage:(id)sender;
+  
+- (IBAction)decreaseOpacity:(id)sender;
+- (IBAction)increaseOpacity:(id)sender;
 
 - (IBAction)showLocationSheet:(id)sender;
 - (IBAction)endLocationSheet:(id)sender;
@@ -54,7 +60,6 @@ extern NSString *const TWVMainTransparantWindowFrameKey;
 
 - (IBAction)toggleBorderlessWindow:(id)sender;
 - (IBAction)toggleCropUnderTitleBar:(id)sender;
-
 - (IBAction)showPreferencePanel:(id)sender;
 	
 - (void)resetAutomaticReloadTimer;	
