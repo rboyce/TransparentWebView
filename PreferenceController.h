@@ -12,6 +12,9 @@ extern NSString *const TWVShouldAutomaticReloadKey;
 extern NSString *const TWVAutomaticReloadIntervalKey;
 extern NSString *const TWVAutomaticReloadChangedNotification;
 
+extern NSString *const TWVOpacityKey;
+extern NSString *const TWVOpacityChangedNotification;
+
 
 @interface PreferenceController : NSWindowController {
 	IBOutlet NSButton		*autoRefreshCheckBox;
@@ -22,6 +25,10 @@ extern NSString *const TWVAutomaticReloadChangedNotification;
 	IBOutlet NSTextField	*autoRefreshRightMark;
 	IBOutlet NSTextField	*autoRefreshMiddleMark;
 	IBOutlet NSTextField	*autoRefreshLeftMark;
+  
+  IBOutlet NSTextField *opacityInfoLabel;
+  IBOutlet NSSlider *opacitySlider;
+  IBOutlet NSTextField *opacityValueLabel;
 	
 	float lastSliderValue;
 	NSMutableArray *sliderDeltas;
@@ -30,9 +37,14 @@ extern NSString *const TWVAutomaticReloadChangedNotification;
 - (IBAction)changeAutomaticRefresh:(id)sender;
 - (IBAction)changeAutoRefreshValue:(id)sender;
 
+- (IBAction)changeOpacityValue:(id)sender;
+
 - (BOOL)shouldAutomaticReload;
 - (int)automaticReloadInterval;
 - (void)setAutomaticReloadEnabled:(BOOL)enabledState;
 - (void)setAutomaticIntervalLabelValue:(int)seconds;
+
+- (double)opacity;
+- (void)setOpacityValue:(double)opacity setPreference:(BOOL)setPreference;
 
 @end

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>64712B27-D3AD-473D-9AF6-9403457E3AC0</string>
+	<key>IDESourceControlProjectName</key>
+	<string>TransparentWebView</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>F49A7E6CC638B2A0C75ABF5D7FA1425367835544</key>
+		<string>https://github.com/rboyce/TransparentWebView.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>TransparentWebView.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>F49A7E6CC638B2A0C75ABF5D7FA1425367835544</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/rboyce/TransparentWebView.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>F49A7E6CC638B2A0C75ABF5D7FA1425367835544</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>F49A7E6CC638B2A0C75ABF5D7FA1425367835544</string>
+			<key>IDESourceControlWCCName</key>
+			<string>TransparentWebView</string>
+		</dict>
+	</array>
+</dict>
+</plist>

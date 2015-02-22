@@ -17,6 +17,8 @@ NSString *const TWVMainTransparantWindowFrameKey = @"MainTransparentWindow";
 
 CGFloat const titleBarHeight = 22.0f;
 
+double const kOpacityInterval = 0.1;
+
 @implementation TransparentWebViewAppDelegate
 
 @synthesize window, theWebView;
@@ -25,23 +27,27 @@ CGFloat const titleBarHeight = 22.0f;
 @synthesize preferenceController;
 
 
++ (void)initialize {
+  // Register the Defaults in the Preferences
+  NSMutableDictionary *defaultValues = [NSMutableDictionary dictionary];
+  
+  [defaultValues setObject:@"http://localhost/" forKey:TWVLocationUrlKey];
+  [defaultValues setObject:[NSNumber numberWithBool:NO] forKey:TWVBorderlessWindowKey];
+  [defaultValues setObject:[NSNumber numberWithBool:NO] forKey:TWVDrawCroppedUnderTitleBarKey];
+  
+  [defaultValues setObject:[NSNumber numberWithBool:NO] forKey:TWVShouldAutomaticReloadKey];
+  [defaultValues setObject:[NSNumber numberWithInt:15] forKey:TWVAutomaticReloadIntervalKey];
+  
+  [defaultValues setObject:[NSNumber numberWithBool:YES] forKey:@"WebKitDeveloperExtras"];
+  
+  [[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
+}
+
 - (id) init {
 	[super init];
 	
-	// Register the Defaults in the Preferences
-	NSMutableDictionary *defaultValues = [NSMutableDictionary dictionary];
-	
-	[defaultValues setObject:@"http://localhost/" forKey:TWVLocationUrlKey];
-	[defaultValues setObject:[NSNumber numberWithBool:NO] forKey:TWVBorderlessWindowKey];
-	[defaultValues setObject:[NSNumber numberWithBool:NO] forKey:TWVDrawCroppedUnderTitleBarKey];
-	
-	[defaultValues setObject:[NSNumber numberWithBool:NO] forKey:TWVShouldAutomaticReloadKey];
-	[defaultValues setObject:[NSNumber numberWithInt:15] forKey:TWVAutomaticReloadIntervalKey];
-	
-	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
-	
 	// Set the url from the Preferences file
-	self.urlString = [[NSUserDefaults standardUserDefaults] objectForKey:TWVLocationUrlKey];
+  self.urlString = [[NSUserDefaults standardUserDefaults] objectForKey:TWVLocationUrlKey];
 	
 	// Register for Preference Changes
 	[[NSNotificationCenter defaultCenter] addObserver:self
@@ -49,13 +55,20 @@ CGFloat const titleBarHeight = 22.0f;
 												 name:TWVAutomaticReloadChangedNotification
 											   object:nil];
 	
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(handleOpacityChange:)
+                                               name:TWVOpacityChangedNotification
+                                             object:nil];
+  
 	return self;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 	// Insert code here to initialize your application
 	NSLog(@"TransparentWebView app got launched ...");
-	[self loadUrlString:self.urlString IntoWebView:self.theWebView];
+  [self loadUrlString:self.urlString IntoWebView:self.theWebView];
+  
+  [self _setWebViewOpacity:[self _opacity]];
 	
 	// Deal with the borderless and crop under title bar settings
 	BOOL borderlessState = [[[NSUserDefaults standardUserDefaults] objectForKey:TWVBorderlessWindowKey] boolValue];
@@ -334,6 +347,55 @@ CGFloat const titleBarHeight = 22.0f;
 	// Set the frame back to the web view
 	[theWebView setFrame:newFrame];
 }
+
+#pragma mark - Opacity
+
+- (void)handleOpacityChange:(NSNotification *)notification {
+  double opacity = [self _opacity];
+  [self _setWebViewOpacity:opacity];
+  [self _setOpacityMenuItemsEnabledForOpacity:opacity];
+}
+
+- (double)_opacity {
+  double opacity = [[NSUserDefaults standardUserDefaults] doubleForKey:TWVOpacityKey];
+  return opacity;
+}
+
+- (void)_setWebViewOpacity:(double)opacity {
+  // Set window alpha because hardware accelerated views in the webview won't follow it's alphaValue :(
+  window.alphaValue = (float)opacity;
+}
+
+- (void)_setOpacityMenuItemsEnabledForOpacity:(double)opacity {
+  _decreaseOpacityMenuItem.enabled = opacity > 0.0;
+  _increaseOpacityMenuItem.enabled = opacity < 1.0;
+}
+
+- (void)_setOpacityPreference:(double)opacity {
+  if (preferenceController != nil) {
+    [preferenceController setOpacityValue:opacity setPreference:YES];
+    return;
+  }
+  
+  // Set the value in the Defaults
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  [defaults setObject:[NSNumber numberWithDouble:opacity] forKey:TWVOpacityKey];
+  [defaults synchronize];
+  
+  // Send a notification
+  [[NSNotificationCenter defaultCenter] postNotificationName:TWVOpacityChangedNotification object:self];
+}
+
+- (IBAction)increaseOpacity:(id)sender {
+  double opacity = MIN([self _opacity] + kOpacityInterval, 1.0);
+  [self _setOpacityPreference:opacity];
+}
+
+- (IBAction)decreaseOpacity:(id)sender {
+  double opacity = MAX([self _opacity] - kOpacityInterval, 0.0);
+  [self _setOpacityPreference:opacity];
+}
+
 
 #pragma mark -
 #pragma mark NSWindow Delegate Methods
