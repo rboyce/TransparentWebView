@@ -23,13 +23,19 @@
                 <rect key="frame" x="0.0" y="0.0" width="547" height="467"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <webView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="206" customClass="TransparentWebView">
+                    <webView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="206" customClass="TransparentWebView">
                         <rect key="frame" x="0.0" y="-133" width="800" height="600"/>
                         <webPreferences key="preferences" defaultFontSize="12" defaultFixedFontSize="12">
                             <nil key="identifier"/>
                         </webPreferences>
                     </webView>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="206" firstAttribute="top" secondItem="2" secondAttribute="top" id="QOm-aQ-6Zp"/>
+                    <constraint firstItem="206" firstAttribute="leading" secondItem="2" secondAttribute="leading" id="QWP-KD-enr"/>
+                    <constraint firstAttribute="bottom" secondItem="206" secondAttribute="bottom" id="Thh-Md-AYa"/>
+                    <constraint firstAttribute="trailing" secondItem="206" secondAttribute="trailing" id="oCv-hx-r84"/>
+                </constraints>
             </view>
             <toolbar key="toolbar" implicitIdentifier="DC1ED72F-F33C-4EB1-B41A-E924A7671CEE" autosavesConfiguration="NO" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="regular" id="339">
                 <allowedToolbarItems>

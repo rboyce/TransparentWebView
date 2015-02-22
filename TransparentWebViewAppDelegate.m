@@ -85,7 +85,9 @@ double const kOpacityInterval = 0.1;
 	// Make us the delegate of the Main Window
 	[window setDelegate:self];
 	
-	// Set the window type and the content frame
+  // Set the window type and the content frame
+  self.borderedWindow = window;
+  
 	if (borderlessState) {
 		NSRect borderlessContentRect = [[window contentView] frame];
 		if (cropUnderTitleState) {
@@ -291,45 +293,31 @@ double const kOpacityInterval = 0.1;
 - (void)replaceWindowWithBorderlessWindow:(BOOL)borderlessFlag WithContentRect:(NSRect)contentRect {
 
 	// Save the previous frame (to file and to string)
-	[window saveFrameUsingName:TWVMainTransparantWindowFrameKey];
-	NSString *savedFrameString = [window stringWithSavedFrame];
+	[self.window saveFrameUsingName:TWVMainTransparantWindowFrameKey];
+	NSString *savedFrameString = [self.window stringWithSavedFrame];
 	
 	// Get a pointer to the old window
-	NSWindow *oldWindow = window;
+	NSWindow *oldWindow = self.window;
 	
-	// Make the windowstyle
-	NSUInteger newStyle;
-	if (borderlessFlag) {
-		newStyle = NSBorderlessWindowMask;
-	} else {
-		newStyle = NSTitledWindowMask |	NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask;
-	}
-	
-	// Create the new window
-	self.window = [[WebViewWindow alloc] initWithContentRect:contentRect
-												   styleMask:newStyle
-													 backing:NSBackingStoreBuffered
-													   defer:NO];
-
-	// Set the properties (as also set in Interface Builder)
-	[window setContentView:[oldWindow contentView]];
-	[window setTitle:@"Transparent Web View"];
-	[window setFrameAutosaveName:TWVMainTransparantWindowFrameKey];
-
-	// Restore the frame from the one save above
-	[window setFrameFromString:savedFrameString];
-	
-	// Set us as the delegate
-	[window setDelegate:self];
-
-	// Order front (Show the Window)
-	[window makeKeyAndOrderFront:self];
-	
-	// Call the same window as awakeFromNib would have
-	[(WebViewWindow *)window setDrawsBackgroundSettings];
-	
-	// Close the old window
-	[oldWindow close];
+  if (self.borderlessWindow == nil) {
+    self.borderlessWindow = [[WebViewWindow alloc] initWithContentRect:contentRect
+                                                         styleMask:NSBorderlessWindowMask
+                                                           backing:NSBackingStoreBuffered
+                                                             defer:NO];
+  }
+  self.window = borderlessFlag ? self.borderlessWindow : self.borderedWindow;
+  
+  [oldWindow orderOut:nil];
+  
+  self.window.contentView = oldWindow.contentView;
+  self.window.frameAutosaveName = TWVMainTransparantWindowFrameKey;
+  [self.window setFrameFromString:savedFrameString];
+  self.window.delegate = self;
+  
+  // Call the same window as awakeFromNib would have
+  [(WebViewWindow *)window setDrawsBackgroundSettings];
+  
+  [self.window makeKeyAndOrderFront:self.window];
 }
 
 - (void)cropContentUnderTitleBar:(BOOL)cropUnderTitleFlag {
@@ -386,7 +374,8 @@ double const kOpacityInterval = 0.1;
 
 - (void)_setWebViewOpacity:(double)opacity {
   // Set window alpha because hardware accelerated views in the webview won't follow it's alphaValue :(
-  window.alphaValue = (float)opacity;
+  self.borderlessWindow.alphaValue = (float)opacity;
+  self.borderedWindow.alphaValue = (float)opacity;
 }
 
 - (void)_setOpacityMenuItemsEnabledForOpacity:(double)opacity {

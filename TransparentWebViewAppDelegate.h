@@ -22,7 +22,7 @@ extern NSString *const TWVMainTransparantWindowFrameKey;
 #else
 @interface TransparentWebViewAppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate> {
 #endif
-    NSWindow *window;
+  NSWindow *window;
 	WebView *theWebView;
 	
 	NSMenuItem *borderlessWindowMenuItem;
@@ -37,6 +37,9 @@ extern NSString *const TWVMainTransparantWindowFrameKey;
 
 @property (assign) IBOutlet NSWindow *window;
 @property (assign) IBOutlet WebView *theWebView;
+  
+@property (nonatomic, strong) NSWindow *borderedWindow;
+@property (nonatomic, strong) NSWindow *borderlessWindow;
 
 @property (assign) IBOutlet NSMenuItem *borderlessWindowMenuItem;
 @property (assign) IBOutlet NSMenuItem *cropUnderTitleBarMenuItem;
