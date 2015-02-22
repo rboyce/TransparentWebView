@@ -13,7 +13,8 @@
 		[self setLevel: NSStatusWindowLevel];
 		[self setAlphaValue: 1.0];
 		[self setOpaque: NO];
-		[self setHasShadow: NO];
+    [self setHasShadow: NO];
+    self.titleVisibility = NSWindowTitleHidden;
 	}
 	return self;
 }

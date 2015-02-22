@@ -47,12 +47,16 @@ extern NSString *const TWVMainTransparantWindowFrameKey;
 @property (assign) IBOutlet NSWindow *locationSheet;
 @property (nonatomic, retain) NSString *urlString;
 	
+@property (assign) IBOutlet NSButtonCell *floatingToolbarButton;
+  
 @property (nonatomic, retain) PreferenceController *preferenceController;
 
   //- (IBAction)reloadPage:(id)sender;
   
 - (IBAction)decreaseOpacity:(id)sender;
 - (IBAction)increaseOpacity:(id)sender;
+  
+- (IBAction)toogleFloating:(id)sender;
 
 - (IBAction)showLocationSheet:(id)sender;
 - (IBAction)endLocationSheet:(id)sender;
