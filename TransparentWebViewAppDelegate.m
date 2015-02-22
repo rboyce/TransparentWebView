@@ -14,6 +14,7 @@ NSString *const TWVLocationUrlKey = @"WebViewLocationUrl";
 NSString *const TWVBorderlessWindowKey = @"OpenBorderlessWindow";
 NSString *const TWVDrawCroppedUnderTitleBarKey = @"DrawCroppedUnderTitleBar";
 NSString *const TWVMainTransparantWindowFrameKey = @"MainTransparentWindow";
+NSString *const TWVWindowFloatingKey = @"WindowFloating";
 
 CGFloat const titleBarHeight = 22.0f;
 
@@ -36,6 +37,7 @@ double const kOpacityInterval = 0.1;
   [defaultValues setObject:[NSNumber numberWithBool:NO] forKey:TWVDrawCroppedUnderTitleBarKey];
   
   [defaultValues setObject:[NSNumber numberWithBool:NO] forKey:TWVShouldAutomaticReloadKey];
+  [defaultValues setObject:[NSNumber numberWithBool:YES] forKey:TWVWindowFloatingKey];
   [defaultValues setObject:[NSNumber numberWithInt:15] forKey:TWVAutomaticReloadIntervalKey];
   
   [defaultValues setObject:[NSNumber numberWithBool:YES] forKey:@"WebKitDeveloperExtras"];
@@ -69,6 +71,8 @@ double const kOpacityInterval = 0.1;
   [self loadUrlString:self.urlString IntoWebView:self.theWebView];
   
   [self _setWebViewOpacity:[self _opacity]];
+  
+  [self _setFloatingState:[self _isWindowFloating]];
 	
 	// Deal with the borderless and crop under title bar settings
 	BOOL borderlessState = [[[NSUserDefaults standardUserDefaults] objectForKey:TWVBorderlessWindowKey] boolValue];
@@ -346,6 +350,25 @@ double const kOpacityInterval = 0.1;
 	
 	// Set the frame back to the web view
 	[theWebView setFrame:newFrame];
+}
+
+#pragma mark - Floating window
+
+- (BOOL)_isWindowFloating {
+  return [[NSUserDefaults standardUserDefaults] boolForKey:TWVWindowFloatingKey];
+}
+- (IBAction)toogleFloating:(id)sender {
+  BOOL floating = ![self _isWindowFloating];
+  [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:floating] forKey:TWVWindowFloatingKey];
+  [self _setFloatingState:floating];
+}
+
+- (void)_setFloatingState:(BOOL)floating {
+  window.level = floating ? NSStatusWindowLevel : NSNormalWindowLevel;
+  window.hasShadow = !floating;
+  [_floatingToolbarButton setState:floating ? NSOnState : NSOffState];
+  [_floatingToolbarButton setTitle:floating ? @"Floating" : @"Float"];
+  [_floatingToolbarButton setImage:[NSImage imageNamed:floating ? @"FloatingWindowTemplate" : @"RegularWindowTemplate"]];
 }
 
 #pragma mark - Opacity

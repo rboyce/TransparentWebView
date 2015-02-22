@@ -17,6 +17,8 @@
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		E1945A0B1A9A57F600B47EF0 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E1945A0A1A9A57F600B47EF0 /* Icons.xcassets */; };
+		E1A17FEC1A99DD4200D5B79C /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1A17FEB1A99DD4200D5B79C /* AppKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +41,8 @@
 		43D5817512C414A4000AEA60 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* TransparentWebView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TransparentWebView.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E1945A0A1A9A57F600B47EF0 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
+		E1A17FEB1A99DD4200D5B79C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/AppKit.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1A17FEC1A99DD4200D5B79C /* AppKit.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				3FC645D40CC8B39B009F9DB0 /* WebKit.framework in Frameworks */,
 			);
@@ -122,6 +127,7 @@
 				8D1107310486CEB800E47090 /* Info.plist */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
 				436BC48313171918003F0603 /* Preferences.xib */,
+				E1945A0A1A9A57F600B47EF0 /* Icons.xcassets */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -129,6 +135,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E1A17FEB1A99DD4200D5B79C /* AppKit.framework */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 				3FC645D30CC8B39B009F9DB0 /* WebKit.framework */,
@@ -190,6 +197,7 @@
 			files = (
 				8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */,
 				43D5817612C414A4000AEA60 /* Icon.icns in Resources */,
+				E1945A0B1A9A57F600B47EF0 /* Icons.xcassets in Resources */,
 				436BC48413171918003F0603 /* Preferences.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
