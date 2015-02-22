@@ -14,7 +14,6 @@
 
 extern NSString *const TWVLocationUrlKey;
 extern NSString *const TWVBorderlessWindowKey;
-extern NSString *const TWVDrawCroppedUnderTitleBarKey;
 extern NSString *const TWVMainTransparantWindowFrameKey;
 
 #if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
@@ -26,7 +25,6 @@ extern NSString *const TWVMainTransparantWindowFrameKey;
 	WebView *theWebView;
 	
 	NSMenuItem *borderlessWindowMenuItem;
-	NSMenuItem *cropUnderTitleBarMenuItem;
 	
 	NSWindow *locationSheet;
 	NSString *urlString;
@@ -42,7 +40,6 @@ extern NSString *const TWVMainTransparantWindowFrameKey;
 @property (nonatomic, strong) NSWindow *borderlessWindow;
 
 @property (assign) IBOutlet NSMenuItem *borderlessWindowMenuItem;
-@property (assign) IBOutlet NSMenuItem *cropUnderTitleBarMenuItem;
   
 @property (assign) IBOutlet NSMenuItem *increaseOpacityMenuItem;
 @property (assign) IBOutlet NSMenuItem *decreaseOpacityMenuItem;
@@ -66,16 +63,13 @@ extern NSString *const TWVMainTransparantWindowFrameKey;
 - (IBAction)cancelLocationSheet:(id)sender;
 
 - (IBAction)toggleBorderlessWindow:(id)sender;
-- (IBAction)toggleCropUnderTitleBar:(id)sender;
 - (IBAction)showPreferencePanel:(id)sender;
 	
 - (void)resetAutomaticReloadTimer;	
 - (void)loadUrlString:(NSString *)anUrlString IntoWebView:(WebView *)aWebView;
 
 - (void)setBorderlessWindowMenuItemState:(BOOL)booleanState;
-- (void)setCropUnderTitleBarMenuItemState:(BOOL)booleanState;
 
-- (void)replaceWindowWithBorderlessWindow:(BOOL)borderlessFlag WithContentRect:(NSRect)contentRect;
-- (void)cropContentUnderTitleBar:(BOOL)cropUnderTitleFlag;
+- (void)replaceWindowWithBorderlessWindow:(BOOL)borderlessFlag;
 
 @end
