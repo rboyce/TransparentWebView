@@ -60,6 +60,9 @@
                                     </segment>
                                 </segments>
                             </segmentedCell>
+                            <connections>
+                                <action selector="backForwardPressed:" target="210" id="Nhu-P6-zyL"/>
+                            </connections>
                         </segmentedControl>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="340"/>
@@ -99,6 +102,7 @@
                     </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
+                    <toolbarItem reference="365"/>
                     <toolbarItem reference="371"/>
                     <toolbarItem reference="340"/>
                     <toolbarItem reference="374"/>
@@ -158,6 +162,16 @@
                             <menuItem title="Open Location..." keyEquivalent="l" id="213">
                                 <connections>
                                     <action selector="showLocation:" target="210" id="qek-qo-2l0"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Back" keyEquivalent="" id="29T-EF-KOv">
+                                <connections>
+                                    <action selector="goBack:" target="210" id="ez6-fe-LvL"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Forward" keyEquivalent="" id="Tlz-13-mdf">
+                                <connections>
+                                    <action selector="goForward:" target="210" id="F6e-TP-3zN"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="323"/>
@@ -259,10 +273,13 @@
         </menu>
         <customObject id="210" customClass="TransparentWebViewAppDelegate">
             <connections>
+                <outlet property="backForwardGroup" destination="363" id="wsB-Fz-dZS"/>
+                <outlet property="backMenuItem" destination="29T-EF-KOv" id="w5R-a6-Nao"/>
                 <outlet property="borderlessWindowMenuItem" destination="yzS-6X-MRt" id="PFD-wY-DmM"/>
                 <outlet property="decreaseOpacityMenuItem" destination="333" id="335"/>
                 <outlet property="floatingToolbarButton" destination="373" id="dLE-NN-agf"/>
                 <outlet property="floatingWindowMenuItem" destination="322" id="yQl-cW-k72"/>
+                <outlet property="forwardMenuItem" destination="Tlz-13-mdf" id="URm-ZY-yYd"/>
                 <outlet property="increaseOpacityMenuItem" destination="332" id="334"/>
                 <outlet property="locationSheet" destination="215" id="228"/>
                 <outlet property="locationTextField" destination="369" id="7VN-qq-Np2"/>

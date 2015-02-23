@@ -35,7 +35,6 @@ extern NSString *const TWVMainTransparantWindowFrameKey;
 
 @property (assign) IBOutlet NSWindow *window;
 @property (assign) IBOutlet WebView *theWebView;
-  
 @property (nonatomic, strong) NSWindow *borderedWindow;
 @property (nonatomic, strong) NSWindow *borderlessWindow;
   
@@ -45,6 +44,11 @@ extern NSString *const TWVMainTransparantWindowFrameKey;
 @property (assign) IBOutlet NSMenuItem *increaseOpacityMenuItem;
 @property (assign) IBOutlet NSMenuItem *decreaseOpacityMenuItem;
 
+@property (assign) IBOutlet NSMenuItem *backMenuItem;
+@property (assign) IBOutlet NSMenuItem *forwardMenuItem;
+  
+@property (assign) IBOutlet NSSegmentedControl *backForwardGroup;
+  
 @property (assign) IBOutlet NSTextField *locationTextField;
   
 @property (assign) IBOutlet NSWindow *locationSheet;

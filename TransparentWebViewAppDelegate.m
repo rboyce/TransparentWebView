@@ -92,6 +92,7 @@ const CGFloat kToolbarHeight = 40.0;
   
   [self loadUrlString:self.urlString IntoWebView:self.theWebView];
   [self _updateLocationField:self.urlString];
+  [self _updateBackForwardButtons];
   
   [self _setWebViewOpacity:[self _opacity]];
   
@@ -163,6 +164,7 @@ const CGFloat kToolbarHeight = 40.0;
     return;
   }
   
+  [self _updateBackForwardButtons];
   [self.locationTextField setStringValue:locationString];
   
   // Save the location url in the Preferences
@@ -199,6 +201,37 @@ const CGFloat kToolbarHeight = 40.0;
 	[webFrame loadRequest: urlReq];
 }
 
+#pragma mark - Back/Forward buttons
+
+- (IBAction)backForwardPressed:(id)sender {
+  if (self.backForwardGroup.selectedSegment == 0) {
+    [self goBack:sender];
+  } else if (self.backForwardGroup.selectedSegment == 1) {
+    [self goForward:sender];
+  }
+}
+
+- (IBAction)goBack:(id)sender {
+  [self.theWebView goBack];
+  [self _updateBackForwardButtons];
+  self.urlString = self.theWebView.mainFrameURL;
+  [self _updateLocationField:self.urlString];
+}
+
+- (IBAction)goForward:(id)sender {
+  [self.theWebView goForward];
+  [self _updateBackForwardButtons];
+  self.urlString = self.theWebView.mainFrameURL;
+  [self _updateLocationField:self.urlString];
+}
+
+- (void)_updateBackForwardButtons {
+  [self.backForwardGroup setEnabled:self.theWebView.canGoBack forSegment:0];
+  [self.backForwardGroup setEnabled:self.theWebView.canGoForward forSegment:1];
+  
+  self.backMenuItem.enabled = self.theWebView.canGoBack;
+  self.forwardMenuItem.enabled = self.theWebView.canGoForward;
+}
 
 #pragma mark -
 #pragma mark Preferences Panel
