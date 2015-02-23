@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7515.2" systemVersion="14C109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
-        <plugIn identifier="com.apple.WebKitIBPlugin" version="6254"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7515.2"/>
+        <plugIn identifier="com.apple.WebKitIBPlugin" version="7515.2"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -28,6 +28,9 @@
                         <webPreferences key="preferences" defaultFontSize="12" defaultFixedFontSize="12">
                             <nil key="identifier"/>
                         </webPreferences>
+                        <connections>
+                            <outlet property="frameLoadDelegate" destination="210" id="aFw-hP-GJG"/>
+                        </connections>
                     </webView>
                 </subviews>
                 <constraints>
@@ -37,7 +40,7 @@
                     <constraint firstAttribute="trailing" secondItem="206" secondAttribute="trailing" id="oCv-hx-r84"/>
                 </constraints>
             </view>
-            <toolbar key="toolbar" implicitIdentifier="DC1ED72F-F33C-4EB1-B41A-E924A7671CEE" autosavesConfiguration="NO" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="regular" id="339">
+            <toolbar key="toolbar" implicitIdentifier="DC1ED72F-F33C-4EB1-B41A-E924A7671CEE" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="regular" id="339">
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="2EFDA88D-BB5C-44FE-BD50-26CA46553621" label="Back/Forward" paletteLabel="Back/Forward" id="365" userLabel="Back/Forward">
                         <nil key="toolTip"/>
@@ -84,16 +87,20 @@
                         <textField key="view" verticalHuggingPriority="750" id="369">
                             <rect key="frame" x="0.0" y="14" width="200" height="22"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" placeholderString="Enter a location..." usesSingleLineMode="YES" bezelStyle="round" id="370">
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" alignment="left" placeholderString="Enter a location..." usesSingleLineMode="YES" bezelStyle="round" id="370">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                <connections>
+                                    <action selector="submitLocationField:" target="210" id="7mu-uZ-BkY"/>
+                                </connections>
                             </textFieldCell>
                         </textField>
                     </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
-                    <toolbarItem reference="343"/>
+                    <toolbarItem reference="371"/>
+                    <toolbarItem reference="340"/>
                     <toolbarItem reference="374"/>
                 </defaultToolbarItems>
             </toolbar>
@@ -150,7 +157,7 @@
                             </menuItem>
                             <menuItem title="Open Location..." keyEquivalent="l" id="213">
                                 <connections>
-                                    <action selector="showLocationSheet:" target="210" id="214"/>
+                                    <action selector="showLocation:" target="210" id="qek-qo-2l0"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="323"/>
@@ -258,6 +265,7 @@
                 <outlet property="floatingWindowMenuItem" destination="322" id="yQl-cW-k72"/>
                 <outlet property="increaseOpacityMenuItem" destination="332" id="334"/>
                 <outlet property="locationSheet" destination="215" id="228"/>
+                <outlet property="locationTextField" destination="369" id="7VN-qq-Np2"/>
                 <outlet property="theWebView" destination="206" id="235"/>
                 <outlet property="toolbar" destination="339" id="ep1-Xb-ABH"/>
                 <outlet property="window" destination="21" id="211"/>
@@ -321,6 +329,32 @@ DQ
                 </subviews>
             </view>
         </window>
+        <button verticalHuggingPriority="750" id="UHU-vX-Fgw">
+            <rect key="frame" x="0.0" y="0.0" width="82" height="32"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1xj-Qs-4lL">
+                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                <font key="font" metaFont="system"/>
+            </buttonCell>
+        </button>
+        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="aRt-e9-ygG">
+            <rect key="frame" x="0.0" y="0.0" width="38" height="17"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="web-AO-6pS">
+                <font key="font" metaFont="system"/>
+                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+            </textFieldCell>
+        </textField>
+        <textField verticalHuggingPriority="750" id="QP5-UB-Giw">
+            <rect key="frame" x="0.0" y="0.0" width="96" height="22"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="W0F-gD-eaK">
+                <font key="font" metaFont="system"/>
+                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+            </textFieldCell>
+        </textField>
     </objects>
     <resources>
         <image name="FloatingWindowTemplate" width="32" height="32"/>
