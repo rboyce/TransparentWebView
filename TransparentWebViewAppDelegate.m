@@ -6,6 +6,8 @@
 //  Copyright 2010 IR labs. All rights reserved.
 //
 
+#import <WebKit/WebView.h>
+
 #import "TransparentWebViewAppDelegate.h"
 #import "WebViewWindow.h"
 #import "PreferenceController.h"
@@ -45,7 +47,7 @@ const CGFloat kToolbarHeight = 40.0;
   [[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
 }
 
-- (id) init {
+- (id)init {
 	[super init];
 	
 	// Set the url from the Preferences file
@@ -69,7 +71,18 @@ const CGFloat kToolbarHeight = 40.0;
 	// Insert code here to initialize your application
 	NSLog(@"TransparentWebView app got launched ...");
   
-  [window setDelegate:self];
+  self.window.delegate = self;
+  self.locationTextField.delegate = self;
+  self.theWebView.frameLoadDelegate = self;
+  
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(_webviewProgressStarted)
+                                               name:WebViewProgressFinishedNotification
+                                             object:self.theWebView];
+
+  NSString *userAgent = [self.theWebView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+  userAgent = [NSString stringWithFormat:@"%@ Version/8.0.3 Safari/600.3.18 TransparentWebView/%@", userAgent, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
+  self.theWebView.customUserAgent = userAgent;
   
   // Set the window type and the content frame
   self.borderedWindow = window;
@@ -78,6 +91,7 @@ const CGFloat kToolbarHeight = 40.0;
   [self setBorderlessWindowMenuItemState:[self _borderlessState]];
   
   [self loadUrlString:self.urlString IntoWebView:self.theWebView];
+  [self _updateLocationField:self.urlString];
   
   [self _setWebViewOpacity:[self _opacity]];
   
@@ -91,6 +105,14 @@ const CGFloat kToolbarHeight = 40.0;
 
 #pragma mark -
 #pragma mark Location Sheet
+
+- (IBAction)showLocation:(id)sender {
+  if ([self _borderlessState]) {
+    return [self showLocationSheet:sender];
+  } else {
+    [self.locationTextField becomeFirstResponder];
+  }
+}
 
 - (IBAction)showLocationSheet:(id)sender {
 	//
@@ -108,11 +130,9 @@ const CGFloat kToolbarHeight = 40.0;
 	[NSApp endSheet:locationSheet];
 	[locationSheet orderOut:sender];
 	
-	// Save the location url in the Preferences
-	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	[defaults setObject:self.urlString forKey:TWVLocationUrlKey];
 	
-	NSLog(@"Load the url: %@", urlString);
+	NSLog(@"Load the url: %@", self.urlString);
+  [self _updateLocationField:self.urlString];
 	[self loadUrlString:self.urlString IntoWebView:self.theWebView];
 }
 
@@ -120,6 +140,49 @@ const CGFloat kToolbarHeight = 40.0;
 	// Return to normal event handling and hide the sheet
 	[NSApp endSheet:locationSheet];
 	[locationSheet orderOut:sender];
+}
+
+- (IBAction)submitLocationField:(id)sender {
+  self.urlString = self.locationTextField.stringValue;
+  [self loadUrlString:self.urlString IntoWebView:self.theWebView];
+}
+
+#pragma mark - NSTextFieldDelegate
+
+- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor {
+  if (control == self.locationTextField) {
+    self.urlString = fieldEditor.string;
+    [self _updateLocationField:self.urlString];
+  }
+  return YES;
+}
+
+- (void)_updateLocationField:(NSString *)locationString {
+  NSResponder *firstResponder = [[NSApp keyWindow] firstResponder];
+  if ([firstResponder isKindOfClass:[NSText class]] && (id)[(NSText *)firstResponder delegate] == (id)self.locationTextField) {
+    return;
+  }
+  
+  [self.locationTextField setStringValue:locationString];
+  
+  // Save the location url in the Preferences
+  [[NSUserDefaults standardUserDefaults] setObject:self.urlString forKey:TWVLocationUrlKey];
+}
+
+- (void)_webviewProgressStarted {
+  self.urlString = self.theWebView.mainFrameURL;
+  [self _updateLocationField:self.urlString];
+}
+
+- (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame {
+  self.urlString = sender.mainFrameURL;
+  [self _updateLocationField:self.urlString];
+}
+
+- (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame {
+  self.urlString = sender.mainFrameURL;
+  [self _updateLocationField:self.urlString];
+
 }
 
 /*

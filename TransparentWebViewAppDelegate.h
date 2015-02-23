@@ -19,7 +19,7 @@ extern NSString *const TWVMainTransparantWindowFrameKey;
 #if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
 @interface TransparentWebViewAppDelegate : NSObject {
 #else
-@interface TransparentWebViewAppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate> {
+@interface TransparentWebViewAppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSTextFieldDelegate> {
 #endif
   NSWindow *window;
 	WebView *theWebView;
@@ -45,6 +45,8 @@ extern NSString *const TWVMainTransparantWindowFrameKey;
 @property (assign) IBOutlet NSMenuItem *increaseOpacityMenuItem;
 @property (assign) IBOutlet NSMenuItem *decreaseOpacityMenuItem;
 
+@property (assign) IBOutlet NSTextField *locationTextField;
+  
 @property (assign) IBOutlet NSWindow *locationSheet;
 @property (nonatomic, retain) NSString *urlString;
 	
@@ -72,5 +74,8 @@ extern NSString *const TWVMainTransparantWindowFrameKey;
 - (void)setBorderlessWindowMenuItemState:(BOOL)booleanState;
 
 - (void)replaceWindowWithBorderlessWindow:(BOOL)borderlessFlag;
+  
+- (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame;
+- (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame;
 
 @end
